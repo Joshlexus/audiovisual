@@ -20,7 +20,7 @@ var Configs = {
     backgroundColor: '#000',
     particleNum: 256,
     step: 5,
-    base: 1000,
+    base: 1024,
     zInc: 0.001
 };
 
@@ -37,7 +37,7 @@ var canvas,
     hueBase = 0,
     zoff = 0;
 
-const fftSize = 256;
+const fftSize = 1024;
 const microphone = new Microphone(fftSize);
 
 // Initialize
@@ -126,34 +126,30 @@ function update() {
         for (i = 0, len = particles.length; i < len; i++) {
             p = particles[i];
 
-            p.pastX = p.x ;
-            p.pastY = p.y ;
+            p.pastX = p.x + samples[i] * 10;
+            p.pastY = p.y + samples[i] * 10;
         
             angle = Math.PI * 6 * getNoise(p.x / base * 1.75, p.y / base * 1.75, zoff);
             p.x += Math.cos(angle ) * step ;
             p.y += Math.sin(angle ) * step ;
-
-            p.x += samples[i] * step * 5 ;
-            p.y += samples[i] * step * 5;
-            
             if (p.color.a < 1) p.color.a += 0.003;
-
-            context.beginPath();
-            context.strokeStyle = p.color.toString();
-            context.moveTo(p.pastX, p.pastY);
-            context.lineTo(p.x, p.y);
-            context.stroke();
-            
+            if( samples[i] > 0 ){
+                context.beginPath();
+                context.strokeStyle = p.color.toString();
+                context.moveTo(p.pastX, p.pastY);
+                context.lineTo(p.x, p.y);
+                context.stroke();
+                
+            }
             if (p.x < 0 || p.x > screenWidth || p.y < 0 || p.y > screenHeight) {
                 initParticle(p);
             }
         }
         
-        hueBase += volume * 10;
+        hueBase += volume * 100;
         zoff += Configs.zInc;
     }
-
-    requestAnimationFrame(update);
+        requestAnimationFrame(update);
 }
 
 
@@ -181,8 +177,6 @@ function Particle(x, y, color) {
     this.pastX = this.x;
     this.pastY = this.y;
 }
-
-
 // Run
 
 main();
