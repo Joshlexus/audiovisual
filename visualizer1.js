@@ -1,3 +1,4 @@
+
 function main(){
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
@@ -45,6 +46,7 @@ function main(){
     }
     const fftSize = 256;
     const microphone = new Microphone(fftSize);
+    console.log('microphone', microphone)
     let bars = [];
     let barWidth = canvas.width/(fftSize/2);
     function createBars(){
